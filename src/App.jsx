@@ -1,20 +1,27 @@
-import "./App.css";
-import NavBar from "./components/NavBar";
-import WealthPornPage from "./pages/WealthPorn";
+import { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router";
 import PlayPage from "./pages/Play";
-import { Route, Routes } from "react-router";
+
+import "./css/style.css";
+
+// Import pages
+import Dashboard from "./pages/Dashboard";
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    document.querySelector("html").style.scrollBehavior = "auto";
+    window.scroll({ top: 0 });
+    document.querySelector("html").style.scrollBehavior = "";
+  }, [location.pathname]); // triggered on route change
+
   return (
     <>
-      <div className="h-screen">
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<WealthPornPage />} />
-          <Route path="/play" element={<PlayPage />} />
-        </Routes>
-        <footer></footer>
-      </div>
+      <Routes>
+        <Route exact path="/" element={<Dashboard />} />
+        <Route path="/play" element={<PlayPage />} />
+      </Routes>
     </>
   );
 }

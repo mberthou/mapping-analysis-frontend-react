@@ -22,6 +22,4 @@ Coming soon...
 
 4. `.env` file expected with some variables, read more in [`.env.example`](./.env.example)
 
-## Project Mgmt
-
-Read the [README of Backend REST API Project](https://github.com/0xadri/wealth-porn-backend-restapi)
+## 🎯 [Project Mgmt](./PRJ_MGMT.md) 🎯
