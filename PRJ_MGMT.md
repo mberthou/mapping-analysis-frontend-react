@@ -5,17 +5,17 @@
 - Project Setup: readme, .gitignore, package.json, .vite.config.js, .env, etc
 - UX: Responsive Navigation: mobile, tablet & desktop friendly
 - Consume RESTful API: initial fetch for "UK Top Wealth Distro"
-- Consume RESTful API: show data in "table section" for "UK Top Wealth Distro"
+- Consume RESTful API: show data in "card with table" (chart.js) for "UK Top Wealth Distro"
 - UX: Responsive table for "UK Top Wealth Distro"
+- Consume RESTful API: show data in "card with bar chart" for "UK Top Wealth Distro"
 
 ### PROG
 
-- Consume RESTful API: show data in "chart section" (3Djs?) for "UK Top Wealth Distro"
-- Consume RESTful API: show data in "bar section" (3Djs?) for "UK Top Wealth Distro"
+- none
 
 ### TODO
 
-- FE: data: try d3js
+- Consume RESTful API: show data in "chart section" (chart.js) for "UK Top Wealth Distro"
 - FE: data viz inspiration https://www.reddit.com/r/interestingasfuck/comments/1d7vbj5/wealth_inequality_in_america_visualized/
 - FE: Mobile First
 - FE: Responsive UX: mobile, tablet & desktop friendly
@@ -23,7 +23,7 @@
 
 ### SHOULD
 
-- none
+- FE: data: try D3.js
 
 ### COULD
 
