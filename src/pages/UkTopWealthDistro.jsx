@@ -27,37 +27,31 @@ function UkTopWealthDistro() {
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
       {/* Dashboard actions */}
       <div className="sm:flex sm:justify-between sm:items-center mb-8">
-        {/* Left: Title */}
+        {/* Title */}
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
             UK Top Weatlh Distribution in 2024
           </h1>
         </div>
       </div>
-      {/* Facts & Figures */}
       <div className="grid grid-cols-12 gap-6">
+        {/* Source */}
         <h4 className="col-span-full font-semibold text-gray-800 dark:text-gray-100">
           Source: EqualityTrust and ONS.
         </h4>
-        {/* Table and Charts */}
-        <div className="col-span-full xl:col-span-5 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-          <div className="p-3">
-            <div className="overflow-x-auto">
-              {!isLoading && ukTopWealthDistroData && (
-                <>
-                  {/* Table  */}
-                  <UkTopWealthDistro_Table
-                    distroData={ukTopWealthDistroData.topWealthDistro}
-                  />
-                  {/* Bar */}
-                  <UkTopWealthDistro_Bar
-                    distroData={ukTopWealthDistroData.topWealthDistro}
-                  />
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Cards */}
+        {!isLoading && ukTopWealthDistroData && (
+          <>
+            {/* Table  */}
+            <UkTopWealthDistro_Table
+              distroData={ukTopWealthDistroData.topWealthDistro}
+            />
+            {/* Bar */}
+            <UkTopWealthDistro_Bar
+              distroData={ukTopWealthDistroData.topWealthDistro}
+            />
+          </>
+        )}
       </div>
     </div>
   );
