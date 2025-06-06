@@ -2,11 +2,16 @@
 
 ### DONE
 
-- none
+- Project Setup: readme, .gitignore, package.json, .vite.config.js, .env, etc
+- UX: Responsive Navigation: mobile, tablet & desktop friendly
+- Consume RESTful API: initial fetch for "UK Top Wealth Distro"
+- Consume RESTful API: show data in "table section" for "UK Top Wealth Distro"
+- UX: Responsive table for "UK Top Wealth Distro"
 
 ### PROG
 
-- Project Setup: readme, .gitignore, package.json, .vite.config.js, .env, etc
+- Consume RESTful API: show data in "chart section" (3Djs?) for "UK Top Wealth Distro"
+- Consume RESTful API: show data in "bar section" (3Djs?) for "UK Top Wealth Distro"
 
 ### TODO
 

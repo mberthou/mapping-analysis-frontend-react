@@ -1,11 +1,10 @@
-// const DISCOGS_BASE_URL="https://api.discogs.com";
 
 async function apiFetch(endpoint, options = {}, retry = true) {
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  const response = await fetch(`${DISCOGS_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${import.meta.env.VITE_WEALTHPORN_API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
@@ -25,8 +24,8 @@ async function apiFetch(endpoint, options = {}, retry = true) {
   return await response.json();
 }
 
-export const searchArtistOnDiscogs = async (searchInput) => {
-  const endpoint = '/database/search?q=' + searchInput + '&' + KEY_SECRET_PARAMS;
+export const getUkTopWealthDistro = async () => {
+  const endpoint = '/uk-data/uk-top-wealth-distro';
   const options = {
     method: 'GET'
   }

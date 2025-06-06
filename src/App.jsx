@@ -9,7 +9,7 @@ import Banner from "./partials/Banner";
 import "./css/style.css";
 
 // Import pages
-import Dashboard from "./pages/Dashboard";
+import UkTopWealthDistro from "./pages/UkTopWealthDistro";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,7 +33,7 @@ function App() {
 
           <main className="grow">
             <Routes>
-              <Route exact path="/" element={<Dashboard />} />
+              <Route exact path="/" element={<UkTopWealthDistro />} />
               <Route path="/play" element={<PlayPage />} />
             </Routes>
           </main>
