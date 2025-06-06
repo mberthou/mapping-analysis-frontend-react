@@ -1,3 +1,5 @@
+export const formatTickBln = (value) => new Intl.NumberFormat('en-US').format(value);
+
 export const formatValue = (value) => Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
