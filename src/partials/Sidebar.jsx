@@ -192,7 +192,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
-                              to="/uk-top-wealth-distro"
+                              to="/"
                               className={({ isActive }) =>
                                 "block transition duration-150 truncate " +
                                 (isActive

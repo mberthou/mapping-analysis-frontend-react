@@ -32,22 +32,10 @@ export const getUkTopWealthDistro = async () => {
   return apiFetch(endpoint, options);
 }
 
-export const getDiscogsIdForArtist = async (searchInput) => {
-  const endpoint = '/database/search?q=' + searchInput + '&' + KEY_SECRET_PARAMS;
+export const getUkBottomWealthDistro = async () => {
+  const endpoint = '/uk-data/uk-bottom-wealth-distro';
   const options = {
     method: 'GET'
   }
-  const data = await apiFetch(endpoint, options);
-  const artists = data.results.filter((resultItem) => resultItem.type === "artist");
-  return artists[0].id; // naive selection of 1st artist in the list
-}
-
-export const getDiscogsImgURLsForArtist = async (artistDiscogsId) => {
-  const endpoint = '/artists/' + artistDiscogsId + '?' + KEY_SECRET_PARAMS;
-  const options = {
-    method: 'GET'
-  }
-  const data = await apiFetch(endpoint, options);
-  const imgURLs = data.images.map((imageSet) => imageSet.uri);
-  return imgURLs;
+  return apiFetch(endpoint, options);
 }

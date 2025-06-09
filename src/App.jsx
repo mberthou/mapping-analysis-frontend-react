@@ -10,6 +10,7 @@ import "./css/style.css";
 
 // Import pages
 import UkTopWealthDistro from "./pages/UkTopWealthDistro";
+import UkBottomWealthDistro from "./pages/UkBottomWealthDistro";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,6 +35,11 @@ function App() {
           <main className="grow">
             <Routes>
               <Route exact path="/" element={<UkTopWealthDistro />} />
+              <Route
+                exact
+                path="/uk-bottom-wealth-distro"
+                element={<UkBottomWealthDistro />}
+              />
               <Route path="/play" element={<PlayPage />} />
             </Routes>
           </main>
