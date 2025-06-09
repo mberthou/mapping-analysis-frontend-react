@@ -27,9 +27,11 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
     const ctx = canvas.current;
     let labels = [];
     let dataCombinedWealthGbp = [];
+    let dataCombinedWealthPercent = [];
     distroData.map((wealthCategory) => {
       labels.push(wealthCategory.population_top_percent + "%");
       dataCombinedWealthGbp.push(wealthCategory.combined_wealth_bln_gbp);
+      dataCombinedWealthPercent.push(wealthCategory.combined_wealth_percent);
     });
 
     const newChart = new Chart(ctx, {
@@ -37,6 +39,7 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
       data: {
         labels: labels,
         datasets: [
+          // Indigo bars
           {
             label: "Bln GBP",
             data: dataCombinedWealthGbp,
@@ -44,6 +47,17 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
             hoverBackgroundColor: getCssVariable("--color-violet-700"),
             borderWidth: 1,
             borderRadius: 4,
+            yAxisID: "absoluteAxis",
+          },
+          // Turquoise bars
+          {
+            label: "%",
+            data: dataCombinedWealthPercent,
+            backgroundColor: getCssVariable("--color-sky-500"),
+            hoverBackgroundColor: getCssVariable("--color-sky-700"),
+            borderWidth: 1,
+            borderRadius: 4,
+            yAxisID: "percentageAxis",
           },
         ],
       },
@@ -57,15 +71,31 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
           },
         },
         scales: {
-          y: {
+          absoluteAxis: {
+            position: "left",
             beginAtZero: true,
             border: {
               display: false,
             },
             ticks: {
-              maxTicksLimit: 6,
-              callback: (value) => formatTickBln(value),
-              color: darkMode ? textColor.dark : textColor.light,
+              callback: function (value, index, ticks) {
+                return formatTickBln(value) + "B";
+              },
+            },
+          },
+          percentageAxis: {
+            position: "right",
+            beginAtZero: true,
+            border: {
+              display: false,
+            },
+            grid: {
+              display: false,
+            },
+            ticks: {
+              callback: function (value, index, ticks) {
+                return value + "%";
+              },
             },
           },
           x: {
@@ -87,7 +117,12 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
           tooltip: {
             callbacks: {
               title: () => false, // Disable tooltip title
-              label: (context) => formatTickBln(context.parsed.y) + " Bln GBP",
+              label: (context) => {
+                if (context.datasetIndex === 0) {
+                  return formatTickBln(context.parsed.y) + " Bln GBP";
+                }
+                return context.parsed.y + "%";
+              },
             },
             bodyColor: darkMode
               ? tooltipBodyColor.dark
@@ -120,15 +155,19 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
 
     if (darkMode) {
       chart.options.scales.x.ticks.color = textColor.dark;
-      chart.options.scales.y.ticks.color = textColor.dark;
-      chart.options.scales.y.grid.color = gridColor.dark;
+      chart.options.scales.absoluteAxis.ticks.color = textColor.dark;
+      chart.options.scales.absoluteAxis.grid.color = gridColor.dark;
+      chart.options.scales.percentageAxis.ticks.color = textColor.dark;
+      chart.options.scales.percentageAxis.grid.color = gridColor.dark;
       chart.options.plugins.tooltip.bodyColor = tooltipBodyColor.dark;
       chart.options.plugins.tooltip.backgroundColor = tooltipBgColor.dark;
       chart.options.plugins.tooltip.borderColor = tooltipBorderColor.dark;
     } else {
       chart.options.scales.x.ticks.color = textColor.light;
-      chart.options.scales.y.ticks.color = textColor.light;
-      chart.options.scales.y.grid.color = gridColor.light;
+      chart.options.scales.absoluteAxis.ticks.color = textColor.light;
+      chart.options.scales.absoluteAxis.grid.color = gridColor.light;
+      chart.options.scales.percentageAxis.ticks.color = textColor.light;
+      chart.options.scales.percentageAxis.grid.color = gridColor.light;
       chart.options.plugins.tooltip.bodyColor = tooltipBodyColor.light;
       chart.options.plugins.tooltip.backgroundColor = tooltipBgColor.light;
       chart.options.plugins.tooltip.borderColor = tooltipBorderColor.light;
