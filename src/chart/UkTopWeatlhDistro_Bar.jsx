@@ -137,10 +137,8 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
   }, [currentTheme]);
 
   return (
-    <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-      {/* Change the height attribute to adjust the chart height */}
-      {/* <BarChart data={chartData} width={595} height={248} /> */}
-      <div className="grow">
+    <div className="flex flex-col col-span-full min-h-[400px] lg:col-span-6 xl:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl max-sm:max-h-[400px] xl:max-h-[500px]">
+      <div className="grow max-sm:max-h-[400px] xl:max-h-[500px]">
         <canvas ref={canvas}></canvas>
       </div>
     </div>

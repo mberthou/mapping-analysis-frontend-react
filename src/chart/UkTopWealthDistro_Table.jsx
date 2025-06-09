@@ -1,3 +1,5 @@
+import { formatTickBln } from "../utils/Utils";
+
 function UkTopWeatlhDistro_Table({ distroData }) {
   return (
     <div className="col-span-full xl:col-span-5 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
@@ -40,7 +42,9 @@ function UkTopWeatlhDistro_Table({ distroData }) {
                   </td>
                   <td className="p-2">
                     <div className="text-center text-green-500">
-                      {wealthCategory.combined_wealth_bln_gbp} Billion GBP
+                      {formatTickBln(wealthCategory.combined_wealth_bln_gbp)}
+                      <span className="sm:hidden">B</span>
+                      <span className="hidden sm:inline">B GBP</span>
                     </div>
                   </td>
                 </tr>
