@@ -177,8 +177,15 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
 
   return (
     <div className="flex flex-col col-span-full min-h-[400px] lg:col-span-6 xl:col-span-6 bg-white dark:bg-gray-800 shadow-xs rounded-xl max-sm:max-h-[400px] xl:max-h-[500px]">
+      <div className="px-5 pt-4 text-xs text-gray-400 dark:text-gray-500 -mb-[10px]">
+        <span>Combined Wealth £</span>
+        <span className="float-right">Combined Wealth %</span>
+      </div>
       <div className="grow max-sm:max-h-[400px] xl:max-h-[500px]">
         <canvas ref={canvas}></canvas>
+      </div>
+      <div className="px-5 pb-4 text-center text-xs text-gray-400 dark:text-gray-500 -mt-[20px]">
+        Population %
       </div>
     </div>
   );
