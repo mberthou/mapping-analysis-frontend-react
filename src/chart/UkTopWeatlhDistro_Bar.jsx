@@ -185,7 +185,7 @@ const UkTopWeatlhDistro_Bar = ({ distroData }) => {
         <canvas ref={canvas}></canvas>
       </div>
       <div className="px-5 pb-4 text-center text-xs text-gray-400 dark:text-gray-500 -mt-[20px]">
-        Population %
+        Population Top %
       </div>
     </div>
   );

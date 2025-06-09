@@ -39,3 +39,11 @@ export const getUkBottomWealthDistro = async () => {
   }
   return apiFetch(endpoint, options);
 }
+
+export const getUkTopHundredWealthiest = async () => {
+  const endpoint = '/uk-data/uk-wealth-top-100';
+  const options = {
+    method: 'GET'
+  }
+  return apiFetch(endpoint, options);
+}
