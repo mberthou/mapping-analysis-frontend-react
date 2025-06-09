@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUkBottomWealthDistro } from "../services/apiWealthPorn";
 import UkBottomWealthDistro_Table from "../chart/UkBottomWealthDistro_Table";
-// import UkTopWealthDistro_Bar from "../chart/UkTopWeatlhDistro_Bar";
+import UkBottomWealthDistro_Bar from "../chart/UkBottomWealthDistro_Bar";
 
 function UkBottomWealthDistro() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,9 +47,9 @@ function UkBottomWealthDistro() {
               distroData={ukBottomWealthDistroData.bottomWealthDistro}
             />
             {/* Bar */}
-            {/* <UkTopWealthDistro_Bar
-              distroData={ukBottomWealthDistroData.topWealthDistro}
-            /> */}
+            <UkBottomWealthDistro_Bar
+              distroData={ukBottomWealthDistroData.bottomWealthDistro}
+            />
           </>
         )}
       </div>
