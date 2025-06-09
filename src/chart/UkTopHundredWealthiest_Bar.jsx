@@ -100,7 +100,7 @@ const UkTopHundredWealthiest_Bar = ({ wealthyPeepsData }) => {
                     dataRanking[context.dataIndex] +
                     " with " +
                     formatTickBln(context.parsed.y) +
-                    " Bln GBP, " +
+                    " Bln GBP : " +
                     dataName[context.dataIndex]
                   );
                 }

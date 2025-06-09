@@ -42,12 +42,12 @@ function UkBottomWealthDistro() {
         {/* Cards */}
         {!isLoading && ukBottomWealthDistroData && (
           <>
-            {/* Table  */}
-            <UkBottomWealthDistro_Table
-              distroData={ukBottomWealthDistroData.bottomWealthDistro}
-            />
             {/* Bar */}
             <UkBottomWealthDistro_Bar
+              distroData={ukBottomWealthDistroData.bottomWealthDistro}
+            />
+            {/* Table  */}
+            <UkBottomWealthDistro_Table
               distroData={ukBottomWealthDistroData.bottomWealthDistro}
             />
           </>
