@@ -25,12 +25,12 @@ const UkTopHundredWealthiest_Bar = ({ wealthyPeepsData }) => {
 
   useEffect(() => {
     const ctx = canvas.current;
-    let labels = [];
+    let dataRanking = [];
     let dataNetWorth = [];
     let dataName = [];
     let dataCitizenship = [];
     wealthyPeepsData.map((wealthyPerson, index) => {
-      labels.push(index + 1);
+      dataRanking.push(index + 1);
       dataNetWorth.push(wealthyPerson.net_worth_bln_gbp);
       dataName.push(wealthyPerson.name);
       dataCitizenship.push(wealthyPerson.citizenship);
@@ -39,7 +39,7 @@ const UkTopHundredWealthiest_Bar = ({ wealthyPeepsData }) => {
     const newChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: labels,
+        labels: dataRanking,
         datasets: [
           // Indigo bars
           {
@@ -95,7 +95,14 @@ const UkTopHundredWealthiest_Bar = ({ wealthyPeepsData }) => {
               title: () => false, // Disable tooltip title
               label: (context) => {
                 if (context.datasetIndex === 0) {
-                  return formatTickBln(context.parsed.y) + " Bln GBP";
+                  return (
+                    "#" +
+                    dataRanking[context.dataIndex] +
+                    " with " +
+                    formatTickBln(context.parsed.y) +
+                    " Bln GBP, " +
+                    dataName[context.dataIndex]
+                  );
                 }
                 return context.parsed.y + "%";
               },
