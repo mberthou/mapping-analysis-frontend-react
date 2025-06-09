@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUkTopHundredWealthiest } from "../services/apiWealthPorn";
 import UkTopHundredWealthiest_Table from "../chart/UkTopHundredWealthiest_Table";
-import UkTopWealthDistro_Bar from "../chart/UkTopWeatlhDistro_Bar";
+import UkTopHundredWealthiest_Bar from "../chart/UkTopHundredWealthiest_Bar";
 
 function UkTopHundredWealthiest() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +31,7 @@ function UkTopHundredWealthiest() {
         {/* Title */}
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
-            UK Top 100 Wealthiest in 2025
+            UK's Wealthiest People in 2025
           </h1>
         </div>
       </div>
@@ -43,14 +43,14 @@ function UkTopHundredWealthiest() {
         {/* Cards */}
         {!isLoading && ukTopHundredWealthiestData && (
           <>
+            {/* Bar */}
+            <UkTopHundredWealthiest_Bar
+              wealthyPeepsData={ukTopHundredWealthiestData.topHundredRichest}
+            />
             {/* Table  */}
             <UkTopHundredWealthiest_Table
               wealthyPeepsData={ukTopHundredWealthiestData.topHundredRichest}
             />
-            {/* Bar */}
-            {/* <UkTopWealthDistro_Bar
-              distroData={ukTopHundredWealthiestData.topWealthDistro}
-            /> */}
           </>
         )}
       </div>

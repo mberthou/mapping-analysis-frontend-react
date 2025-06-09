@@ -2,7 +2,7 @@ import { formatTickBln } from "../utils/Utils";
 
 function UkTopHundredWealthiest_Table({ wealthyPeepsData }) {
   return (
-    <div className="col-span-full xl:col-span-5 bg-white dark:bg-gray-800 shadow-xs rounded-xl">
+    <div className="col-span-full  bg-white dark:bg-gray-800 shadow-xs rounded-xl">
       <div className="p-3">
         <div className="overflow-x-auto">
           <table className="table-auto w-full dark:text-gray-300">
@@ -28,11 +28,11 @@ function UkTopHundredWealthiest_Table({ wealthyPeepsData }) {
             {/* Table body */}
             <tbody className="text-sm font-medium divide-y divide-gray-100 dark:divide-gray-700/60">
               {wealthyPeepsData &&
-                wealthyPeepsData.map((wealthyPerson) => (
+                wealthyPeepsData.map((wealthyPerson, index) => (
                   <tr key={wealthyPerson._id}>
                     <td className="p-2">
                       <div className="text-center text-sky-500">
-                        {wealthyPerson.rank}
+                        {index + 1}
                       </div>
                     </td>
                     <td className="p-2">
