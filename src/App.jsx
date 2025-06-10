@@ -12,6 +12,7 @@ import "./css/style.css";
 import UkTopWealthDistro from "./pages/UkTopWealthDistro";
 import UkBottomWealthDistro from "./pages/UkBottomWealthDistro";
 import UkTopHundredWealthiest from "./pages/UkTopHundredWealthiest";
+import UkGiniCoefficient from "./pages/UkGiniCoefficient";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,6 +46,11 @@ function App() {
                 exact
                 path="/uk-top-100-wealthiest"
                 element={<UkTopHundredWealthiest />}
+              />
+              <Route
+                exact
+                path="/uk-gini-coefficient"
+                element={<UkGiniCoefficient />}
               />
               <Route path="/play" element={<PlayPage />} />
             </Routes>

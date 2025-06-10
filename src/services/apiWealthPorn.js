@@ -47,3 +47,11 @@ export const getUkTopHundredWealthiest = async () => {
   }
   return apiFetch(endpoint, options);
 }
+
+export const getUkGiniCoefficient = async () => {
+  const endpoint = '/uk-data/uk-gini-coef';
+  const options = {
+    method: 'GET'
+  }
+  return apiFetch(endpoint, options);
+}
