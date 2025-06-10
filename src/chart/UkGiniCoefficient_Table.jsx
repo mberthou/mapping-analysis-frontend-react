@@ -29,7 +29,7 @@ function UkGiniCoefficient_Table({ giniCoefficientsData }) {
                     </div>
                   </td>
                   <td className="p-2">
-                    <div className="text-center">
+                    <div className="text-center text-green-500">
                       {yearData.gini_coefficient}%
                     </div>
                   </td>

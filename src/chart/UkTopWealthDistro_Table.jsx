@@ -11,7 +11,7 @@ function UkTopWeatlhDistro_Table({ distroData }) {
               <tr>
                 <th className="p-2">
                   <div className="font-semibold text-center">
-                    Population Top Percentile
+                    Population Top %
                   </div>
                 </th>
                 <th className="p-2">
@@ -36,12 +36,12 @@ function UkTopWeatlhDistro_Table({ distroData }) {
                     </div>
                   </td>
                   <td className="p-2">
-                    <div className="text-center">
+                    <div className="text-center text-green-500">
                       {wealthCategory.combined_wealth_percent}%
                     </div>
                   </td>
                   <td className="p-2">
-                    <div className="text-center text-green-500">
+                    <div className="text-center ">
                       {formatTickBln(wealthCategory.combined_wealth_bln_gbp)}
                       <span className="sm:hidden">B</span>
                       <span className="hidden sm:inline">B GBP</span>

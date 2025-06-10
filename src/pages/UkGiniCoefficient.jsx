@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUkGiniCoefficient } from "../services/apiWealthPorn";
 import UkGiniCoefficient_Table from "../chart/UkGiniCoefficient_Table";
-import UkTopHundredWealthiest_Bar from "../chart/UkTopHundredWealthiest_Bar";
+import UkGiniCoefficient_Bar from "../chart/UkGiniCoefficient_Bar";
 
 function UkGiniCoefficient() {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,9 +43,9 @@ function UkGiniCoefficient() {
         {!isLoading && ukGiniCoefficientsData && (
           <>
             {/* Bar */}
-            {/* <UkTopHundredWealthiest_Bar
-              wealthyPeepsData={ukTopHundredWealthiestData.topHundredRichest}
-            /> */}
+            <UkGiniCoefficient_Bar
+              giniCoefficientsData={ukGiniCoefficientsData.giniCoefficients}
+            />
             {/* Table  */}
             <UkGiniCoefficient_Table
               giniCoefficientsData={ukGiniCoefficientsData.giniCoefficients}
