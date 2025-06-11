@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation } from "react-router";
 import PlayPage from "./pages/Play";
+import MappingDashboard from "./pages/MappingDashboard"
 
 import Sidebar from "./partials/Sidebar";
 import Header from "./partials/Header";
-import Banner from "./partials/Banner";
 
 import "./css/style.css";
 
-// Import pages
-import UkTopWealthDistro from "./pages/UkTopWealthDistro";
-import UkBottomWealthDistro from "./pages/UkBottomWealthDistro";
-import UkTopHundredWealthiest from "./pages/UkTopHundredWealthiest";
-import UkGiniCoefficient from "./pages/UkGiniCoefficient";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -36,22 +31,7 @@ function App() {
 
           <main className="grow">
             <Routes>
-              <Route exact path="/" element={<UkTopWealthDistro />} />
-              <Route
-                exact
-                path="/uk-bottom-wealth-distro"
-                element={<UkBottomWealthDistro />}
-              />
-              <Route
-                exact
-                path="/uk-top-100-wealthiest"
-                element={<UkTopHundredWealthiest />}
-              />
-              <Route
-                exact
-                path="/uk-gini-coefficient"
-                element={<UkGiniCoefficient />}
-              />
+              <Route exact path="/" element={<MappingDashboard />} />
               <Route path="/play" element={<PlayPage />} />
             </Routes>
           </main>
