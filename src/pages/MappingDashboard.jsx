@@ -5,88 +5,19 @@ function MappingDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState();
   const [mappingData, setMappingData] = useState();
-  const [parameters, setParameters] = useState(new Set());
-  const [subsites, setSubsites] = useState(new Set());
-  const [siteNames, setSiteNames] = useState(new Set());
-  const [selectedParameter, setSelectedParameter] = useState('');
+  
+  const [choiceTree, setChoiceTree] = useState(new Map())
 
-  useEffect(() => {
-    try 
-    {
-      console.log("extracting key information from mapping data");
-      if(!mappingData)
-      {        
-        console.log("mapping data is empty");
-        return
-      }
-      
-      console.log(mappingData);
-
-      const expectedSubsiteProperties = new Set(["name", "x", "y", "w", "h", "sel"]);
-      const foundSites = new Set()
-      const foundSubsites = new Set();
-      const foundParameters = new Set();
-
-      const sites = mappingData['Content']['sites']
-      console.log(sites);
-      console.log(`${sites.length} rows to traverse`);
-      
-      for (const rowOfSites of sites)
-      {
-        console.log(rowOfSites);
-        console.log(`${rowOfSites.length} cols to traverse`);
-        for (const site of rowOfSites)
-        {
-          console.log(`adding site name ${site.name}`);
-          foundSites.add(site.name);
-          for (const subsite of site.subsites) 
-          {
-            console.log(subsite);
-            foundSubsites.add(subsite.name);
-            for(const key of Object.keys(subsite))
-            {
-              if(!expectedSubsiteProperties.has(key))
-              {
-                foundParameters.add(key);
-              }
-            }
-          }
-        }
-      }
-
-      console.log("displaying data");
-      console.log(`found ${foundSites.size} subsites:`)
-      for (const item of foundSites) 
-      {
-          console.log(item);
-      }
-    
-      console.log(`found ${foundSubsites.size} subsites:`)
-      for (const item of foundSubsites) 
-      {
-          console.log(item);
-      }
-
-      console.log(`found ${foundParameters.size} parameters:`)
-      for (const item of foundParameters) 
-      {
-          console.log(item);
-      }
-
-      setSubsites(foundSubsites);
-      setSiteNames(foundSites);
-      setParameters(foundParameters);
-    }
-    catch (err) 
-    {
-      setErrorMsg(err.message);
-    } 
-    finally 
-    {
-      setIsLoading(false);
-    }
-  }, [mappingData]);
-
+  const [siteChoices, setSiteChoices] = useState([]);
+  const [selectedSites, setSelectedSites] = useState([]);
+  
+  const [subsiteChoices, setSubsiteChoices] = useState([]);
+  const [selectedSubsites, setSelectedSubsites] = useState([]);
+  
+  const [parameterChoices, setParameterChoices] = useState([]);
+  const [selectedParameters, setSelectedParameters] = useState([]);
+  
+  // loading mapping data on page load
   useEffect(() => {
     const loadData = async () => {
       try 
@@ -98,12 +29,143 @@ function MappingDashboard() {
       }
       catch (err) 
       {
+        console.error(err.message);
         setErrorMsg(err.message);
       }
     };
 
     loadData();
   }, []);
+
+
+  // extracting site/subsite/parameter choices available in mapping data 
+  useEffect(() => {
+    try 
+    {
+      console.log("extracting key information from mapping data");
+      if(!mappingData)
+      {        
+        console.log("mapping data is empty");
+        return
+      }
+      
+      // console.log(mappingData);
+
+      const expectedSubsiteProperties = new Set(["name", "x", "y", "w", "h", "sel"]);
+      const foundChoices = new Map()
+
+      // console.info(sites);
+      // console.info(`${sites.length} rows to traverse`);
+      
+      for (const rowOfSites of mappingData['Content']['sites'])
+      {
+        // console.info(rowOfSites);
+        // console.info(`${rowOfSites.length} cols to traverse`);
+        for (const site of rowOfSites)
+        {
+          // console.info(`adding site name ${site.name}`);
+          if(!foundChoices.has(site.name))
+          {
+            // console.info(`adding site ${site.name} to choices`);
+            foundChoices.set(site.name, new Map())
+          }
+
+          for (const subsite of site.subsites) 
+          {            
+            if(!foundChoices.get(site.name).has(subsite.name))
+            {
+              // console.info(`adding subsite name ${subsite.name} to choices for ${site.name}`);
+              foundChoices.get(site.name).set(subsite.name, []);
+            }
+
+            for(const key of Object.keys(subsite))
+            {
+              if(!expectedSubsiteProperties.has(key) && !foundChoices.get(site.name).get(subsite.name).includes(key))
+              {
+                // console.info(`adding parameter ${key} to choices for subsite ${subsite.name} in site ${site.name}`);
+                foundChoices.get(site.name).get(subsite.name).push(key);
+              }
+            }
+          }
+        }
+      }
+
+      setChoiceTree(foundChoices);
+    }
+    catch (err) 
+    {
+      console.error(err.message);
+      // console.log(err.stack);
+      setErrorMsg(err.message);
+    } 
+    finally 
+    {
+      setIsLoading(false);
+    }
+  }, [mappingData]);
+
+  // rebuilding site choices and selection on choice tree modification
+  useEffect(()=>{
+    try{
+      setSiteChoices(Array.from(choiceTree.keys()) );
+      setSelectedSites(siteChoices);
+    }
+    catch (err) 
+    {
+      console.error(err.message);
+      // console.log(err.stack);
+      setErrorMsg(err.message);
+    }
+  }, [choiceTree])
+  
+  // rebuilding subsite choices on site selection modification
+  useEffect(() => {
+    try{
+      const subsitesToShow = Array.from(new Set(
+        selectedSites.map(
+           (value, index, map) => Array.from(choiceTree.get(value).keys())
+          ).flat()
+      ));
+
+      setSubsiteChoices(subsitesToShow);
+      setSelectedSubsites(subsiteChoices);
+    }
+    catch (err) 
+    {
+      console.error(err.message);
+      // console.log(err.stack);
+      setErrorMsg(err.message);
+    }
+  }, [selectedSites])
+
+  
+  // rebuilding parameter choices on subsite selection modification
+  useEffect(() => {
+    try{
+      const selectedSitesData = selectedSites.map( (value) => choiceTree.get(value));
+      const availableParameters = new Set();
+      for(const siteData of selectedSitesData)
+      {
+        for(const selectedSubsite of selectedSubsites)
+        {
+          if( siteData.has(selectedSubsite))
+          {
+            siteData.get(selectedSubsite).forEach(value => availableParameters.add(value));
+          }
+        }        
+      }
+
+      console.log("available parameters:");
+      console.log(availableParameters);
+      setParameterChoices(Array.from(availableParameters));
+    }
+    catch (err) 
+    {
+      console.error(err.message);
+      // console.log(err.stack);
+      setErrorMsg(err.message);
+    }
+  }, [selectedSubsites])
 
 
   return (
@@ -120,32 +182,22 @@ function MappingDashboard() {
       <div className="grid grid-cols-12 gap-6">
         {/* Cards */}
         {!isLoading && mappingData && (
-          <>
-          <div>
-            {/* List of parameters */}
-            <label>
-              Available Parameters:
-              <select 
-                value={selectedParameter} 
-                onChange={e => setSelectedParameter(e.target.value)}
-                name="selectParameter"
-              >
-                {
-                  Array.from(parameters).map( param => (
-                    <option key={param} value={param}>{param}</option>
-                    )
-                  )
-                }
-              </select>
-            </label>
-          </div>
+          <div>          
             {/* List of sites */}
             <div>
             <label>
               Sites:
-              <select name="selectSite" >
+              <select 
+                 multiple={true}
+                 value={selectedSites}
+                 onChange={e => {
+                  const options = [...e.target.selectedOptions];
+                  const values = options.map(option => option.value);
+                  setSelectedSites(values);
+                }}
+                 name="select_sites" >
                 {
-                  Array.from(siteNames).map( item => (
+                  siteChoices.map( item => (
                     <option key={item} value={item}>{item}</option>
                     )
                   )
@@ -157,17 +209,49 @@ function MappingDashboard() {
             <div>
             <label>
               Subsites:
-              <select name="selectSubsites" >
+              <select 
+                name="select_subsites"
+                multiple={true}
+                value={selectedSubsites}
+                onChange={e => {
+                  const options = [...e.target.selectedOptions];
+                  const values = options.map(option => option.value);
+                  setSelectedSubsites(values);
+                }}
+              >
                 {
-                  Array.from(subsites).map( item => (
+                  subsiteChoices.map( item => (
                     <option key={item} value={item}>{item}</option>
                     )
                   )
                 }
               </select>
             </label>
-            </div>      
-          </>
+            </div>
+            <div>
+              {/* List of parameters */}
+              <label>
+                Available Parameters:
+                <select 
+                  multiple={true}
+                  value={selectedParameters}
+                  onChange={e => {
+                    const options = [...e.target.selectedOptions];
+                    const values = options.map(option => option.value);
+                    setSelectedParameters(values);
+                  }}
+                  name="selectParameters"
+                >
+                  {
+                    parameterChoices.map( param => (
+                      <option key={param} value={param}>{param}</option>
+                      )
+                    )
+                  }
+                </select>
+              </label>
+            </div>    
+          </div>
         )}
       </div>
     </div>
