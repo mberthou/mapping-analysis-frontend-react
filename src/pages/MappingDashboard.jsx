@@ -16,6 +16,8 @@ function MappingDashboard() {
   
   const [parameterChoices, setParameterChoices] = useState([]);
   const [selectedParameters, setSelectedParameters] = useState([]);
+
+  const [selectedParameterValues, setSelectedParameterValues] = useState( new Map());
   
   // loading mapping data on page load
   useEffect(() => {
@@ -167,6 +169,54 @@ function MappingDashboard() {
     }
   }, [selectedSubsites])
 
+
+  // extract selectedParameterValues when selectedParameter changes
+  useEffect(() => {
+    if(!mappingData)
+    {
+      return;
+    }
+
+    const parameterValues = new Map();
+    for (const rowOfSites of mappingData['Content']['sites'])
+    {
+      // console.info(rowOfSites);
+      // console.info(`${rowOfSites.length} cols to traverse`);
+      for (const site of rowOfSites) {
+        // console.info(`adding site name ${site.name}`);
+        if (!selectedSites.includes(site.name)) {
+          continue;
+        }
+
+        for (const subsite of site.subsites) {
+          if(!selectedSubsites.includes(subsite.name))
+          {
+            continue;
+          }
+
+          for (const key of Object.keys(subsite)) {
+            if(!selectedParameters.includes(key))
+            {
+              continue;
+            }
+
+            console.log(key);
+            if(!parameterValues.has(key))
+            {
+              parameterValues.set(key, []);
+            }
+
+            parameterValues.get(key).push(subsite[key])
+          }
+        }
+      }
+    }
+
+    console.info("parameterValues");
+    console.info(parameterValues);
+    setSelectedParameterValues(parameterValues);
+  }, [selectedParameters])
+  
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
