@@ -25,14 +25,8 @@ const ParameterDistro_Bar = ({ parameterData }) => {
 
   useEffect(() => {
     const ctx = canvas.current;
-    let labels = [];
-    let dataCombinedWealthGbp = [];
-    let dataCombinedWealthPercent = [];
-    parameterData.map((wealthCategory) => {
-      labels.push(wealthCategory.population_bottom_percent + "%");
-      dataCombinedWealthGbp.push(wealthCategory.combined_wealth_bln_gbp);
-      dataCombinedWealthPercent.push(wealthCategory.combined_wealth_percent);
-    });
+    const labels = parameterData.map((parameterBin) => `${parameterBin.from.toFixed(2)} to ${parameterBin.to.toFixed(2)} `);
+    const values = parameterData.map((parameterBin) => parameterBin.value);
 
     const newChart = new Chart(ctx, {
       type: 'bar',
@@ -41,24 +35,14 @@ const ParameterDistro_Bar = ({ parameterData }) => {
         datasets: [
           // Indigo bars
           {
-            label: "Bln GBP",
-            data: dataCombinedWealthGbp,
+            label: "Parameter",
+            data: values,
             backgroundColor: getCssVariable("--color-violet-500"),
             hoverBackgroundColor: getCssVariable("--color-violet-700"),
             borderWidth: 1,
             borderRadius: 4,
             yAxisID: "absoluteAxis",
-          },
-          // Turquoise bars
-          {
-            label: "%",
-            data: dataCombinedWealthPercent,
-            backgroundColor: getCssVariable("--color-sky-500"),
-            hoverBackgroundColor: getCssVariable("--color-sky-700"),
-            borderWidth: 1,
-            borderRadius: 4,
-            yAxisID: "percentageAxis",
-          },
+          }
         ],
       },
       options: {
@@ -79,7 +63,7 @@ const ParameterDistro_Bar = ({ parameterData }) => {
             },
             ticks: {
               callback: function (value, index, ticks) {
-                return formatTickBln(value) + "B";
+                return formatTickBln(value);
               },
             },
           },
@@ -148,7 +132,7 @@ const ParameterDistro_Bar = ({ parameterData }) => {
     });
     setChart(newChart);
     return () => newChart.destroy();
-  }, []);
+  }, [parameterData]);
 
   useEffect(() => {
     if (!chart) return;

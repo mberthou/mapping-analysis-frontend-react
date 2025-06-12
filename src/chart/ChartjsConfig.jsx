@@ -37,7 +37,7 @@ export const chartColors = {
   },
   gridColor: {
     light: getCssVariable('--color-gray-100'),
-    dark: adjustColorOpacity(getCssVariable('--color-gray-700'), 0.6),
+    dark: getCssVariable('--color-gray-700'),
   },
   backdropColor: {
     light: getCssVariable('--color-white'),

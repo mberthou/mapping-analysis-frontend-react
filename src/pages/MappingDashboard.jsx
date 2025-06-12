@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getMappingData } from "../services/apiMappingData";
+import ParameterDistro_Bar from "../chart/ParameterDistro_Bar";
 
 function MappingDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +19,7 @@ function MappingDashboard() {
   const [selectedParameters, setSelectedParameters] = useState([]);
 
   const [selectedParameterValues, setSelectedParameterValues] = useState( new Map());
+  const [barChartData, setBarChartData] = useState([{from : 0, to : 1, value : 0}, {from : 1, to : 2, value : 1}, {from : 2, to : 3, value : 2}])
   
   // loading mapping data on page load
   useEffect(() => {
@@ -218,28 +220,40 @@ function MappingDashboard() {
   }, [selectedParameters])
   
   useEffect(() => {
-    const barChartData = {};
+    const allBinings = {};
     for(var [param, values] of selectedParameterValues)
     {
-      const max = Math.max(...values);
-      const min = Math.min(...values);
+      let max = Math.max(...values);
+      let min = Math.min(...values);
+      const margin = ( max - min ) / 20;
+      max += margin;
+      min -= margin;
       const step = (max - min) /10;
       
       const bining = [];
       for(let i = 0; i < 10; ++i)
       {
+        const from = min + i*step;
+        const to = min + (i+1)*step;
         bining.push(
           {
-            "from" : min + i*step, 
-            "to": min + (i+1)*step,
-            "value" : values.filter(x => x >= min && x < min + step).length
+            from : from, 
+            to : to,
+            value : values.filter(x => x >= from && x < to).length
           });
       }
 
-      barChartData[param] = bining;
+      allBinings[param] = bining;
     }
 
-    console.log(barChartData);
+    console.log(allBinings);
+    if( !Object.keys(allBinings).length) 
+    {
+      return;
+    }
+
+    console.log("reload graph data");
+    setBarChartData(Object.values(allBinings)[0]);
   }, [selectedParameterValues])
   
 
@@ -254,12 +268,11 @@ function MappingDashboard() {
           </h1>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {/* Cards */}
         {!isLoading && mappingData && (
-          <div>          
+          <div className="grid grid-cols-1 gap-6">          
             {/* List of sites */}
-            <div>
             <label>
               Sites:
               <select 
@@ -279,7 +292,6 @@ function MappingDashboard() {
                 }
               </select>
             </label>
-            </div>
             {/* List of subsites */}
             <div>
             <label>
@@ -327,6 +339,11 @@ function MappingDashboard() {
               </label>
             </div>    
           </div>
+        )}
+        {barChartData && (
+            <div>
+              <ParameterDistro_Bar parameterData={barChartData}/>
+            </div>
         )}
       </div>
     </div>
