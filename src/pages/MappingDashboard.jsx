@@ -1,6 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getMappingData } from "../services/apiMappingData";
 import ParameterDistro_Bar from "../chart/ParameterDistro_Bar";
+import MultiSelector from "../components/MultiSelector";
+import { D3Barplot } from "../chart/D3Barplot";
+import { ExtractHeatmapData } from "../chart/ExtractMappingHeatMapData";
+import { Heatmap } from "../chart/HeatMap";
+import demoHeatmapData from "../chart/DemoHeatMapData"
 
 function MappingDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,9 +23,24 @@ function MappingDashboard() {
   const [parameterChoices, setParameterChoices] = useState([]);
   const [selectedParameters, setSelectedParameters] = useState([]);
 
-  const [selectedParameterValues, setSelectedParameterValues] = useState( new Map());
-  const [barChartData, setBarChartData] = useState([{from : 0, to : 1, value : 0}, {from : 1, to : 2, value : 1}, {from : 2, to : 3, value : 2}])
-  
+  const [parameterValuesToShow, setParameterValuesToShow] = useState( new Map());
+  const [barChartData, setBarChartData] = useState([{name : "0 to 1", value : 0}, {name : "1 to 2", value : 1}, {name : "2 to 3", value : 2}])
+  const [allBarChartData, setAllBarChartData] = useState({});
+  const [heatMapData, setHeatMapData] = useState(demoHeatmapData)
+    
+  // reset heatMapData
+  useEffect( () => {
+    console.info("reset heatMapData");
+    if(!mappingData || selectedSites.length < 1 || selectedSubsites.length < 1 || selectedParameters.length < 1 )
+    {
+      setHeatMapData(demoHeatmapData);
+    }
+
+    setHeatMapData(
+      ExtractHeatmapData(mappingData, selectedSites[0], selectedSubsites[0], selectedParameters[0])
+    );
+  }, [selectedParameters] );
+
   // loading mapping data on page load
   useEffect(() => {
     const loadData = async () => {
@@ -112,7 +132,7 @@ function MappingDashboard() {
   useEffect(()=>{
     try{
       setSiteChoices(Array.from(choiceTree.keys()) );
-      setSelectedSites(siteChoices);
+      setSelectedSites(Array.from(choiceTree.keys()));
     }
     catch (err) 
     {
@@ -132,7 +152,7 @@ function MappingDashboard() {
       ));
 
       setSubsiteChoices(subsitesToShow);
-      setSelectedSubsites(subsiteChoices);
+      setSelectedSubsites(subsitesToShow);
     }
     catch (err) 
     {
@@ -162,6 +182,7 @@ function MappingDashboard() {
       console.log("available parameters:");
       console.log(availableParameters);
       setParameterChoices(Array.from(availableParameters));
+      setSelectedParameters(Array.from(availableParameters));
     }
     catch (err) 
     {
@@ -174,54 +195,58 @@ function MappingDashboard() {
 
   // extract selectedParameterValues when selectedParameter changes
   useEffect(() => {
-    if(!mappingData)
-    {
-      return;
-    }
+    try {
+      if(!mappingData || !selectedParameters)
+      {
+        return;
+      }
 
-    const parameterValues = new Map();
-    for (const rowOfSites of mappingData['Content']['sites'])
-    {
-      // console.info(rowOfSites);
-      // console.info(`${rowOfSites.length} cols to traverse`);
-      for (const site of rowOfSites) {
-        // console.info(`adding site name ${site.name}`);
-        if (!selectedSites.includes(site.name)) {
-          continue;
-        }
-
-        for (const subsite of site.subsites) {
-          if(!selectedSubsites.includes(subsite.name))
-          {
+      const parameterValues = new Map();
+      for (const rowOfSites of mappingData['Content']['sites'])
+      {
+        // console.info(rowOfSites);
+        // console.info(`${rowOfSites.length} cols to traverse`);
+        for (const site of rowOfSites) {
+          // console.info(`adding site name ${site.name}`);
+          if (!selectedSites.includes(site.name)) {
             continue;
           }
 
-          for (const key of Object.keys(subsite)) {
-            if(!selectedParameters.includes(key))
+          for (const subsite of site.subsites) {
+            if(!selectedSubsites.includes(subsite.name))
             {
               continue;
             }
 
-            console.log(key);
-            if(!parameterValues.has(key))
-            {
-              parameterValues.set(key, []);
-            }
+            for (const key of Object.keys(subsite)) {
+              if(!selectedParameters || !selectedParameters.includes(key))
+              {
+                continue;
+              }
 
-            parameterValues.get(key).push(subsite[key])
+              if(!parameterValues.has(key))
+              {
+                parameterValues.set(key, []);
+              }
+
+              parameterValues.get(key).push(subsite[key])
+            }
           }
         }
       }
-    }
 
-    console.info("parameterValues");
-    console.info(parameterValues);
-    setSelectedParameterValues(parameterValues);
-  }, [selectedParameters])
+      setParameterValuesToShow(parameterValues);
+    }
+    catch(err)
+    {
+      console.error(err.message);
+      console.log(err.stack);
+      setErrorMsg(err.message);
+    }}, [selectedParameters])
   
   useEffect(() => {
     const allBinings = {};
-    for(var [param, values] of selectedParameterValues)
+    for(var [param, values] of parameterValuesToShow)
     {
       let max = Math.max(...values);
       let min = Math.min(...values);
@@ -237,8 +262,7 @@ function MappingDashboard() {
         const to = min + (i+1)*step;
         bining.push(
           {
-            from : from, 
-            to : to,
+            name : `${from.toPrecision(4)} to ${to.toPrecision(4)}`,
             value : values.filter(x => x >= from && x < to).length
           });
       }
@@ -246,15 +270,14 @@ function MappingDashboard() {
       allBinings[param] = bining;
     }
 
-    console.log(allBinings);
     if( !Object.keys(allBinings).length) 
     {
       return;
     }
 
-    console.log("reload graph data");
     setBarChartData(Object.values(allBinings)[0]);
-  }, [selectedParameterValues])
+    setAllBarChartData(allBinings);
+  }, [parameterValuesToShow])
   
 
   return (
@@ -262,89 +285,60 @@ function MappingDashboard() {
       {/* Dashboard actions */}
       <div className="sm:flex sm:justify-between sm:items-center mb-8">
         {/* Title */}
-        <div className="mb-4 sm:mb-0">
-          <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
+          <h1 className="text-2xl text-gray-800 dark:text-gray-100 font-bold">
             Mapping Analysis
           </h1>
-        </div>
       </div>
-      <div className="grid grid-cols-2 gap-6">
-        {/* Cards */}
+      <div className="flex flex-row gap-4">
+        {/* Selectors */}
         {!isLoading && mappingData && (
-          <div className="grid grid-cols-1 gap-6">          
+          <div className="shrink flex flex-col flex-nowrap gap-2">          
             {/* List of sites */}
-            <label>
-              Sites:
-              <select 
-                 multiple={true}
-                 value={selectedSites}
-                 onChange={e => {
-                  const options = [...e.target.selectedOptions];
-                  const values = options.map(option => option.value);
-                  setSelectedSites(values);
-                }}
-                 name="select_sites" >
-                {
-                  siteChoices.map( item => (
-                    <option key={item} value={item}>{item}</option>
-                    )
-                  )
-                }
-              </select>
-            </label>
+            <label>Sites:</label>
+            <MultiSelector 
+              name="SelectParameters"
+              choices={siteChoices}
+              setSelectedChoices={setSelectedSites}
+              selectedChoices={selectedSites}
+            /> 
             {/* List of subsites */}
-            <div>
-            <label>
-              Subsites:
-              <select 
-                name="select_subsites"
-                multiple={true}
-                value={selectedSubsites}
-                onChange={e => {
-                  const options = [...e.target.selectedOptions];
-                  const values = options.map(option => option.value);
-                  setSelectedSubsites(values);
-                }}
-              >
-                {
-                  subsiteChoices.map( item => (
-                    <option key={item} value={item}>{item}</option>
-                    )
-                  )
-                }
-              </select>
-            </label>
-            </div>
-            <div>
-              {/* List of parameters */}
-              <label>
-                Available Parameters:
-                <select 
-                  multiple={true}
-                  value={selectedParameters}
-                  onChange={e => {
-                    const options = [...e.target.selectedOptions];
-                    const values = options.map(option => option.value);
-                    setSelectedParameters(values);
-                  }}
-                  name="selectParameters"
-                >
-                  {
-                    parameterChoices.map( param => (
-                      <option key={param} value={param}>{param}</option>
-                      )
-                    )
-                  }
-                </select>
-              </label>
-            </div>    
+            <label>Subsites:</label>
+            <MultiSelector 
+              name="SelectParameters"
+              choices={subsiteChoices}
+              setSelectedChoices={setSelectedSubsites}
+              selectedChoices={selectedSubsites}
+            />  
+            {/* List of parameters */}
+            <label>Available Parameters:</label>
+            <MultiSelector
+              name="SelectParameters"
+              choices={parameterChoices}
+              setSelectedChoices={setSelectedParameters}
+              selectedChoices={selectedParameters}
+            />
           </div>
         )}
-        {barChartData && (
+        <div className="grow flex flex-wrap gap-4"> 
+        {/* charts */}
+        {
+          (Object.entries(allBarChartData).map(
+            entry => (<div><D3Barplot data={entry[1]} width="500" height="400"/></div>)))
+        }
+        {
+          /*
+          barChartData && (
             <div>
               <ParameterDistro_Bar parameterData={barChartData}/>
-            </div>
-        )}
+            </div>)
+            */
+        }
+        <div>          
+        {
+          heatMapData && (<div><Heatmap width="400" height="400" data={heatMapData}/></div>)
+        }
+        </div>
+        </div>
       </div>
     </div>
   );

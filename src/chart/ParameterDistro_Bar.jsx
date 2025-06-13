@@ -25,7 +25,7 @@ const ParameterDistro_Bar = ({ parameterData }) => {
 
   useEffect(() => {
     const ctx = canvas.current;
-    const labels = parameterData.map((parameterBin) => `${parameterBin.from.toFixed(2)} to ${parameterBin.to.toFixed(2)} `);
+    const labels = parameterData.map((parameterBin) => parameterBin.name);
     const values = parameterData.map((parameterBin) => parameterBin.value);
 
     const newChart = new Chart(ctx, {
