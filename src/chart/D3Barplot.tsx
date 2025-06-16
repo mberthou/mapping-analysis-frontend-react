@@ -1,7 +1,5 @@
 import * as d3 from 'd3';
-
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 };
-const BAR_PADDING = 0.3;
+import React, { useRef, useEffect } from 'react'
 
 type BarplotProps = {
   width: number;
@@ -10,104 +8,65 @@ type BarplotProps = {
 };
 
 export const D3Barplot = ({ width, height, data }: BarplotProps) => {
-  // bounds = area inside the graph axis = calculated by substracting the margins
-  const boundsWidth = width - MARGIN.right - MARGIN.left;
-  const boundsHeight = height - MARGIN.top - MARGIN.bottom;
+  const svgRef = useRef(null);
 
-  // X axis is for groups since the barplot is vertical
-  const groups = data.sort((a, b) => b.value - a.value).map((d) => d.name);
-  const xScale = d3
-    .scaleBand()
-    .domain(groups)
-    .range([0, boundsWidth])
-    .padding(BAR_PADDING);
+  useEffect(
+    () => {
+          // Check that svg element has been rendered
+          if(svgRef.current) {
+              let svg = d3.select(svgRef.current);
+              svg.selectAll("*").remove();
 
-  // Y axis
-  const max = d3.max(data.map((d) => d.value)) ?? 10;
-  const yScale = d3
-    .scaleLinear()
-    .domain([max * 1.2, 0])
-    .range([0, boundsHeight]);
+              // set the dimensions and margins of the graph
+              var margin = {top: 30, right: 30, bottom: 80, left: 60},
+                  canvas_width = width - margin.left - margin.right,
+                  canvas_height = height - margin.top - margin.bottom;
 
-  // Build the shapes
-  const allShapes = data.map((d, i) => {
-    const x = xScale(d.name);
-    if (x === undefined) {
-      return null;
-    }
 
-    return (
-      <g key={i}>
-        <rect
-          x={x}
-          y={yScale(d.value)}
-          width={xScale.bandwidth()}
-          height={boundsHeight - yScale(d.value)}
-          opacity={0.9}
-          stroke="#6689c6"
-          fill="#6689c6"
-          fillOpacity={0.6}
-          strokeWidth={1}
-          rx={1}
-        />
-        <text
-          x={x + xScale.bandwidth() / 2}
-          y={yScale(d.value) - 10}
-          textAnchor="middle"
-          alignmentBaseline="central"
-          fontSize={12}
-        >
-          {d.value}
-        </text>
-        <text
-          x={x + xScale.bandwidth() / 2}
-          y={boundsHeight + 10}
-          textAnchor="middle"
-          alignmentBaseline="central"
-          fontSize={12}
-        >
-          {d.name}
-        </text>
-      </g>
-    );
-  });
+              svg = svg.append("svg")
+                .attr("width", canvas_width + margin.left + margin.right)
+                .attr("height", canvas_height + margin.top + margin.bottom)
+                .append("g")
+                  .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
 
-  const grid = yScale.ticks(5).map((value, i) => (
-    <g key={i}>
-      <line
-        x1={0}
-        x2={boundsWidth}
-        y1={yScale(value)}
-        y2={yScale(value)}
-        stroke="#808080"
-        opacity={0.2}
-      />
-      <text
-        x={-10}
-        y={yScale(value)}
-        textAnchor="middle"
-        alignmentBaseline="central"
-        fontSize={9}
-        stroke="#808080"
-        opacity={0.8}
-      >
-        {value}
-      </text>
-    </g>
-  ));
+              // X axis
+              var x_axis = d3.scaleBand()
+                .range([ 0, canvas_width ])
+                .domain(data.map(function(d) { return d.name; }))
+                .padding(0.2);
+
+              svg.append("g")
+                .attr("transform", "translate(0," + canvas_height + ")")
+                .call(d3.axisBottom(x_axis))
+                .selectAll("text")
+                  .attr("transform", "translate(-10,0)rotate(-45)")
+                  .style("text-anchor", "end");
+
+              // Add Y axis
+              var y_axis = d3.scaleLinear()
+                .domain([0, d3.max(data, (d) => d.value)])
+                .range([canvas_height, 0]);
+              svg.append("g")
+                .call(d3.axisLeft(y_axis));
+
+              // Bars
+              svg.selectAll("mybar")
+                .data(data)
+                .enter()
+                .append("rect")
+                  .attr("x", function(d) { return x_axis(d.name); })
+                  .attr("y", function(d) { return y_axis(d.value); })
+                  .attr("width", x_axis.bandwidth())
+                  .attr("height", function(d) { return canvas_height - y_axis(d.value); })
+                  .attr("fill", "#69b3a2");
+            }
+      },
+    [svgRef.current, data])
 
   return (
     <div>
-      <svg width={width} height={height}>
-        <g
-          width={boundsWidth}
-          height={boundsHeight}
-          transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}
-        >
-          {grid}
-          {allShapes}
-        </g>
-      </svg>
+      <svg ref={svgRef} width={width} height={height}/>
     </div>
   );
 };

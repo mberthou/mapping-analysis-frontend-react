@@ -3,9 +3,8 @@ import { getMappingData } from "../services/apiMappingData";
 import ParameterDistro_Bar from "../chart/ParameterDistro_Bar";
 import MultiSelector from "../components/MultiSelector";
 import { D3Barplot } from "../chart/D3Barplot";
-import { ExtractHeatmapData } from "../chart/ExtractMappingHeatMapData";
+import { ExtractAllHeatmapData } from "../chart/ExtractMappingHeatMapData";
 import { Heatmap } from "../chart/HeatMap";
-import demoHeatmapData from "../chart/DemoHeatMapData"
 
 function MappingDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,19 +25,22 @@ function MappingDashboard() {
   const [parameterValuesToShow, setParameterValuesToShow] = useState( new Map());
   const [barChartData, setBarChartData] = useState([{name : "0 to 1", value : 0}, {name : "1 to 2", value : 1}, {name : "2 to 3", value : 2}])
   const [allBarChartData, setAllBarChartData] = useState({});
-  const [heatMapData, setHeatMapData] = useState(demoHeatmapData)
+  const [allHeatMapData, setAllHeatMapData] = useState({})
     
-  // reset heatMapData
+  // reset all heatMapData
   useEffect( () => {
-    console.info("reset heatMapData");
+    console.info("reset all heatMapData");
     if(!mappingData || selectedSites.length < 1 || selectedSubsites.length < 1 || selectedParameters.length < 1 )
     {
-      setHeatMapData(demoHeatmapData);
+      setAllHeatMapData({});
     }
 
-    setHeatMapData(
-      ExtractHeatmapData(mappingData, selectedSites[0], selectedSubsites[0], selectedParameters[0])
+    setAllHeatMapData(
+      ExtractAllHeatmapData(mappingData, selectedSites, selectedSubsites, selectedParameters)
     );
+
+    console.log("heat map data:");
+    console.log(allHeatMapData);
   }, [selectedParameters] );
 
   // loading mapping data on page load
@@ -262,7 +264,7 @@ function MappingDashboard() {
         const to = min + (i+1)*step;
         bining.push(
           {
-            name : `${from.toPrecision(4)} to ${to.toPrecision(4)}`,
+            name : `${from.toPrecision(3)} to ${to.toPrecision(3)}`,
             value : values.filter(x => x >= from && x < to).length
           });
       }
@@ -275,7 +277,7 @@ function MappingDashboard() {
       return;
     }
 
-    setBarChartData(Object.values(allBinings)[0]);
+    // setBarChartData(Object.values(allBinings)[0]);
     setAllBarChartData(allBinings);
   }, [parameterValuesToShow])
   
@@ -322,22 +324,12 @@ function MappingDashboard() {
         <div className="grow flex flex-wrap gap-4"> 
         {/* charts */}
         {
-          (Object.entries(allBarChartData).map(
-            entry => (<div><D3Barplot data={entry[1]} width="500" height="400"/></div>)))
+          (selectedParameters.map(param => allBarChartData[param] && allHeatMapData[param] && (
+          <div className="flex flex-wrap gap-4">
+            <D3Barplot data={allBarChartData[param]} width="500" height="500"/>
+            <Heatmap width="500" height="500" data={allHeatMapData[param]}/>
+          </div>)))            
         }
-        {
-          /*
-          barChartData && (
-            <div>
-              <ParameterDistro_Bar parameterData={barChartData}/>
-            </div>)
-            */
-        }
-        <div>          
-        {
-          heatMapData && (<div><Heatmap width="400" height="400" data={heatMapData}/></div>)
-        }
-        </div>
         </div>
       </div>
     </div>

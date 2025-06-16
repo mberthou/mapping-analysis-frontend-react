@@ -6,7 +6,7 @@ const MARGIN = { top: 10, right: 10, bottom: 30, left: 30 };
 type HeatmapProps = {
   width: number;
   height: number;
-  data: { x: string; y: string; value: number }[];
+  data: { x: number; y: number; value: number }[];
 };
 
 export const Heatmap = ({ width, height, data }: HeatmapProps) => {
@@ -25,8 +25,8 @@ export const Heatmap = ({ width, height, data }: HeatmapProps) => {
     const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
     // groups
-    const allYGroups = useMemo(() => [...new Set(data.map((d) => d.y))], [data]);
-    const allXGroups = useMemo(() => [...new Set(data.map((d) => d.x))], [data]);
+    const allXGroups = useMemo(() => [...new Set(data.map((d) => d.x))].sort().map(x => x.toString()), [data]);
+    const allYGroups = useMemo(() => [...new Set(data.map((d) => d.y))].sort().map(y => y.toString()), [data]);
 
     // x and y scales
     const xScale = useMemo(() => {
@@ -99,8 +99,8 @@ export const Heatmap = ({ width, height, data }: HeatmapProps) => {
       context.clearRect(0, 0, width, height);
 
       data.forEach((d) => {
-        const x = xScale(d.x);
-        const y = yScale(d.y);
+        const x = xScale(d.x.toString());
+        const y = yScale(d.y.toString());
         if (x === undefined || y === undefined) return;
 
         context.fillStyle = colorScale(d.value);
