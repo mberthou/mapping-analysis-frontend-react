@@ -10,8 +10,8 @@ function MultiSelector({name, choices, selectedChoices, setSelectedChoices}) {
             }}
             name={name}>
             {
-                choices.map( param => (
-                    <option key={param} value={param}>{param}</option>
+                choices.map( elem => (
+                    <option key={elem} value={elem}>{elem}</option>
             ))}
         </select>
     );    

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
+import SampleSelector from "../components/SampleSelector"
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import ImageLogo from "../images/wealthporn_8470ff.png";
 
@@ -105,6 +106,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
             <img src={ImageLogo} className="max-w-34" />
           </NavLink>
         </div>
+
+        <SampleSelector/>
 
         {/* Links */}
         <div className="space-y-8">
