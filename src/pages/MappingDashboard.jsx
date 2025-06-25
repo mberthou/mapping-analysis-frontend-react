@@ -5,6 +5,7 @@ import MultiSelector from "../components/MultiSelector";
 import { D3Barplot } from "../chart/D3Barplot";
 import { ExtractAllHeatmapData } from "../chart/ExtractMappingHeatMapData";
 import { Heatmap } from "../chart/HeatMap";
+import BinningPanel from "../components/BinningPanel";
 
 function MappingDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +22,9 @@ function MappingDashboard() {
   
   const [parameterChoices, setParameterChoices] = useState([]);
   const [selectedParameters, setSelectedParameters] = useState([]);
+
+  const [binningChoices, setBinningChoices] = useState([]);
+  const [selectedBinnings, setSelectedBinnings] = useState([]);
 
   const [parameterValuesToShow, setParameterValuesToShow] = useState( new Map());
   const [barChartData, setBarChartData] = useState([{name : "0 to 1", value : 0}, {name : "1 to 2", value : 1}, {name : "2 to 3", value : 2}])
@@ -319,6 +323,14 @@ function MappingDashboard() {
               setSelectedChoices={setSelectedParameters}
               selectedChoices={selectedParameters}
             />
+            <label>Available Binnings:</label>
+            <MultiSelector
+              name="SelectParameters"
+              choices={binningChoices}
+              setSelectedChoices={setSelectedBinnings}
+              selectedChoices={selectedParameters}
+            />
+            <BinningPanel />
           </div>
         )}
         <div className="grow flex flex-wrap gap-4"> 
