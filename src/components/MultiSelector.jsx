@@ -1,6 +1,3 @@
-import React, { useState, useRef, useEffect } from 'react';
-
-
 function MultiSelector({name, choices, selectedChoices, setSelectedChoices}) {
     return (
         <select 
